@@ -20,7 +20,7 @@ pipeline {
 
     stage('SonarCloud Scan') {
       steps {
-        sh """
+        sh "mvn sonar:sonar ..."
           mvn -B sonar:sonar \
             -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
             -Dsonar.organization=${SONAR_ORG} \
