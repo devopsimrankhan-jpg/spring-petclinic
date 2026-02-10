@@ -14,13 +14,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo "Building application..."
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo "Running tests..."
+                echo "Build triggered by GitHub webhook"
             }
         }
     }
