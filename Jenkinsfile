@@ -8,26 +8,28 @@ pipeline {
   }
 
   stages {
+
     stage('Checkout') {
       steps { checkout scm }
     }
 
     stage('Build') {
       steps {
-        sh 'mvn -B clean verify'
+        sh 'mvn clean verify'
       }
     }
 
-    stage('SonarCloud Scan') {
+    stage('SonarCloud') {
       steps {
-        sh "mvn sonar:sonar ..."
-          mvn -B sonar:sonar \
-            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-            -Dsonar.organization=${SONAR_ORG} \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${SONAR_TOKEN}
+        sh """
+        mvn sonar:sonar \
+          -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+          -Dsonar.organization=${SONAR_ORG} \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${SONAR_TOKEN}
         """
       }
     }
+
   }
 }
