@@ -1,5 +1,5 @@
 pipeline {
-  first-agent-job
+  agent any
 
   environment {
     SONAR_TOKEN = credentials('jenkins-token2')
