@@ -16,18 +16,22 @@ pipeline {
         stage('SonarCloud Scan') {
             steps {
                 withSonarQubeEnv('SonarCloud') {
-                    sh 'mvn sonar:sonar'
+                    sh '''
+                    mvn clean verify sonar:sonar \
+                      -Dsonar.projectKey=devopsimrankhan_spring-petclinic \
+                      -Dsonar.organization=devopsimrankhan \
+                      -Dsonar.host.url=https://sonarcloud.io
+                    '''
                 }
             }
         }
 
-        stage('Quality Gate') {
+        stage("Quality Gate") {
             steps {
-                timeout(time: 2, unit: 'MINUTES') {
+                timeout(time: 3, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
             }
         }
-
     }
 }
