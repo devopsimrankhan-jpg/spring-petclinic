@@ -1,32 +1,46 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven3'
+        jdk 'JDK17'
+    }
+
+    environment {
+        SONAR_PROJECT_KEY = 'devopsimran_spring-petclinic'
+        SONAR_ORG = 'devopsimran'
+    }
+
     stages {
+
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/spring-projects/spring-petclinic.git'
+            }
+        }
 
         stage('Build') {
             steps {
-                sh 'mvn clean install'
+                sh 'mvn clean verify'
             }
         }
 
         stage('SonarCloud Analysis') {
             steps {
                 withSonarQubeEnv('SonarCloud') {
-                    sh '''
-                    mvn clean verify sonar:sonar \
-                    -Dsonar.projectKey=devopsimrankhan-jpg_spring-petclinic \
-                    -Dsonar.organization=devopsimrankhan-jpg \
-                    -Dsonar.host.url=https://sonarcloud.io
-                    '''
+                    sh """
+                        mvn sonar:sonar \
+                        -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+                        -Dsonar.organization=$SONAR_ORG \
+                        -Dsonar.host.url=https://sonarcloud.io
+                    """
                 }
             }
         }
 
         stage('Quality Gate') {
             steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
+                waitForQualityGate abortPipeline: true
             }
         }
     }
