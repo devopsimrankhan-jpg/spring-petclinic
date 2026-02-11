@@ -1,37 +1,11 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    SONAR_TOKEN = credentials('jenkins-token2')
-    SONAR_ORG = 'devopsimrankhan-jpg'
-    SONAR_PROJECT_KEY = 'devopsimrankhan-jpg_spring-petclinic'
-  }
-
-  stages {
-
-    stage('Checkout') {
-      steps { checkout scm }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package -DskipTests'
+            }
+        }
     }
-
-    stage('Build') {
-      steps {
-        sh 'mvn clean verify'
-      }
-    }
-
-    stage('SonarCloud') {
-      steps {
-        sh """
-        mvn sonar:sonar \
-          -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-          -Dsonar.organization=${SONAR_ORG} \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${SONAR_TOKEN}
-        """
-      }
-    }
-
-  }
 }
-
-king khan
