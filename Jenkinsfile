@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven'
-    }
-
     stages {
 
         stage('Build') {
@@ -13,20 +9,21 @@ pipeline {
             }
         }
 
-        stage('SonarCloud Scan') {
+        stage('SonarCloud Analysis') {
             steps {
-                withSonarQubeEnv('SonarCloud') {
+                withSonarQubeEnv('SonarQube-Cloud') {
                     sh '''
                     mvn clean verify sonar:sonar \
-                      -Dsonar.projectKey=devopsimrankhan_spring-petclinic \
-                      -Dsonar.organization=devopsimrankhan \
-                      -Dsonar.host.url=https://sonarcloud.io
+                    -Dsonar.projectKey=devopsimrankhan-jpg_spring-petclinic \
+                    -Dsonar.organization=devopsimrankhan-jpg \
+                    -Dsonar.host.url=https://sonarcloud.io \
+                    -Dsonar.login=$SONAR_AUTH_TOKEN
                     '''
                 }
             }
         }
 
-        stage("Quality Gate") {
+        stage('Quality Gate') {
             steps {
                 timeout(time: 3, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
